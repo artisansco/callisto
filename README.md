@@ -14,12 +14,6 @@ The platform is built for scalability, security, and automation-first HR managem
 - https://dribbble.com/shots/24637443-InsightHub-KPI-Project-Management-Dashboard
 - https://dribbble.com/shots/24748298-BordUp-HR-Recruitment-Dashboard
 
-##### Names
-- Efficio (Latin: “to accomplish/execute”)
-- TeamBloom
-- BrightPath
-- Hiro (play on HR + hero, startup-style, catchy, HR pun)
-- Verda (means “green/truth”)
 
 ##### Unclean notes
 ### Features Tailored for Different Company Sizes
