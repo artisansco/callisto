@@ -5,7 +5,8 @@
 
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+@plugin "@iconify/tailwind4";
 
 @theme {
-  --color-primary: #007bff;
+	/*--color-primary: #007bff;*/
 }
