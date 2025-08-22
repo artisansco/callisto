@@ -1,4 +1,5 @@
-name: CI/CD - SvelteKit & Golang
+name: Build & Release
+
 permissions:
   contents: write
 
@@ -8,6 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 on:
+  workflow_call:
   pull_request:
     branches:
       - main
@@ -18,84 +20,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  format:
-    name: Format Code (Go & SvelteKit)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Setup Golang
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.22
-
-      - name: Install frontend dependencies
-        working-directory: web
-        run: npm install
-
-      - name: Run client format
-        working-directory: web
-        run: npm run format
-
-      - name: Install backend dependencies and format
-        working-directory: api
-        run: touch .env && make audit
-
-      - name: Commit formatting changes to PR
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: auto-format code"
-          branch: ${{ github.head_ref }}
-
-  test:
-    name: Run Tests (Go & SvelteKit)
-    if: contains(github.event.head_commit.message, '[ci]')
-    runs-on: ubuntu-latest
-    needs: format
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install SvelteKit Dependencies
-        working-directory: web
-        run: npm install
-
-      - name: Run SvelteKit Tests
-        working-directory: web
-        run: npm run test
-
-      - name: Setup Golang
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.22
-
-      - name: Install Go Dependencies
-        working-directory: api
-        run: go mod tidy
-
-      - name: Run Go Tests
-        working-directory: api
-        run: touch .env && go test ./... -count=1
-
   build:
-    name: Build & Release
-    if: contains(github.event.head_commit.message, '[release]')
+    name: Build Application
     runs-on: ubuntu-latest
-    needs: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -165,7 +92,6 @@ jobs:
 
   release:
     name: Create GitHub Release
-    if: contains(github.event.head_commit.message, '[release]')
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -178,24 +104,8 @@ jobs:
           name: hrflow
           path: release
 
-      # - name: Download frontend build artifacts
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: web-build
-      #     path: release/client
-      #
-      # - name: Download backend build artifacts
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: api-build
-      #     path: release/api
-
       - name: Debug Downloaded Artifacts
         run: ls -R release || echo "❌ No release artifacts found after downloading!"
-
-      # - name: Debug TAR File Before Upload
-      #   run: |
-      #     ls -lah release/hrflow-build.tar.gz || echo "❌ TAR file is missing!"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

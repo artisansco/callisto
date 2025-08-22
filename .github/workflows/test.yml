@@ -1,0 +1,54 @@
+name: Run Tests
+
+permissions:
+  contents: read
+
+# cancel in-progress runs on new commits to same PR (gitub.event.number)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  workflow_call:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Tests (Go & SvelteKit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install SvelteKit Dependencies
+        working-directory: web
+        run: npm install
+
+      - name: Run SvelteKit Tests
+        working-directory: web
+        run: npm run test
+
+      - name: Setup Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22
+
+      - name: Install Go Dependencies
+        working-directory: api
+        run: go mod tidy
+
+      - name: Run Go Tests
+        working-directory: api
+        run: touch .env && go test ./... -count=1

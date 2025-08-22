@@ -1,0 +1,40 @@
+name: Main CI/CD Pipeline
+
+permissions:
+  contents: write
+
+# cancel in-progress runs on new commits to same PR (gitub.event.number)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+jobs:
+  format:
+    name: Format Code
+    uses: ./.github/workflows/format.yml
+    secrets: inherit
+
+  test:
+    name: Run Tests
+    if: contains(github.event.head_commit.message, '[test]')
+    needs: format
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  build:
+    name: Build & Release
+    if: contains(github.event.head_commit.message, '[build]')
+    needs: test
+    uses: ./.github/workflows/build.yml
+    secrets: inherit

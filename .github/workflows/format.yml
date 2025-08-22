@@ -1,0 +1,59 @@
+name: Format Code
+
+permissions:
+  contents: write
+
+# cancel in-progress runs on new commits to same PR (gitub.event.number)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
+  cancel-in-progress: true
+
+on:
+  workflow_call:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  format:
+    name: Format Code (Go & SvelteKit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22
+
+      - name: Install frontend dependencies
+        working-directory: web
+        run: npm install
+
+      - name: Run client format
+        working-directory: web
+        run: npm run format
+
+      - name: Install backend dependencies and format
+        working-directory: api
+        run: touch .env && make audit
+
+      - name: Commit formatting changes to PR
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: auto-format code"
+          branch: ${{ github.head_ref }}
