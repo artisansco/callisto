@@ -1,4 +1,4 @@
-module hrflow
+module callisto
 
 go 1.22.0
 

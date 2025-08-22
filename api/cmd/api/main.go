@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"hrflow/internal/server"
+	"callisto/internal/server"
 )
 
 func gracefulShutdown(apiServer *http.Server, done chan bool) {

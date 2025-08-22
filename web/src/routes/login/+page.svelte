@@ -55,7 +55,7 @@
           disabled={login.pending > 0}
           class="btn flex w-full justify-center disabled:cursor-not-allowed"
         >
-          {#if login.pending === 0}
+          {#if login.pending > 0}
             <span class="icon-[mdi--loading] size-5 animate-spin"></span>
             Signing in...
           {:else}
