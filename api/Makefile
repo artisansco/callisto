@@ -55,7 +55,7 @@ tidy:
 
 # Run the application
 run: build
-	@go run cmd/api/hiro
+	@go run cmd/api/
 
 
 # Build the application
@@ -64,20 +64,20 @@ all: build test
 
 build:
 	@echo "Building..."
-	@go build -o ./bin/hiro cmd/api/main.go
+	@go build -o ./bin/api cmd/api/main.go
 
 
 ## build/api: build the cmd/api application
 .PHONY: build/all
 build/all:
 	@echo 'Building cmd/api...'
-	go build -ldflags="-s" -o=./bin/hiro ./cmd/api
+	go build -ldflags="-s" -o=./bin/api ./cmd/api
 	@echo 'Building for linux...'
-	GOOS=linux GOARCH=amd64 go build -ldflags="-s" -o=./bin/hiro_linux_amd64 ./cmd/api
+	GOOS=linux GOARCH=amd64 go build -ldflags="-s" -o=./bin/api_linux_amd64 ./cmd/api
 	@echo 'Building for OSX/darwin...'
-	GOOS=darwin GOARCH=amd64 go build -ldflags="-s" -o=./bin/hiro_darwin_amd64 ./cmd/api
+	GOOS=darwin GOARCH=amd64 go build -ldflags="-s" -o=./bin/api_darwin_amd64 ./cmd/api
 	@echo 'Building for windows...'
-	GOOS=windows GOARCH=amd64 go build -ldflags="-s" -o=./bin/hiro_windows_amd64 ./cmd/api
+	GOOS=windows GOARCH=amd64 go build -ldflags="-s" -o=./bin/api_windows_amd64 ./cmd/api
 
 
 # Clean the binary
@@ -89,7 +89,7 @@ clean:
 watch:
 	@if command -v air > /dev/null; then \
 		air \
-			--build.cmd "make build" --build.bin "./bin/hiro" --build.delay "100" \
+			--build.cmd "make build" --build.bin "./bin/api" --build.delay "100" \
 			--build.exclude_dir "" \
 			--build.include_ext "go, tpl, tmpl, html, css, scss, js, ts, sql, jpeg, jpg, gif, png, bmp, svg, webp, ico" \
 			--misc.clean_on_exit "true"; \
@@ -99,7 +99,7 @@ watch:
 		if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
 			go install github.com/air-verse/air@latest; \
 			air \
-				--build.cmd "make build" --build.bin "./bin/hiro" --build.delay "100" \
+				--build.cmd "make build" --build.bin "./bin/api" --build.delay "100" \
 				--build.exclude_dir "" \
 				--build.include_ext "go, tpl, tmpl, html, css, scss, js, ts, sql, jpeg, jpg, gif, png, bmp, svg, webp, ico" \
 				--misc.clean_on_exit "true"; \
