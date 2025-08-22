@@ -145,12 +145,12 @@ jobs:
           name: api-build
           path: release/api
           if-no-files-found: error
- 
+
       - name: Create TAR Archive
         run: |
           mkdir -p release
           tar -czvf release/hrflow-build.tar.gz -C release api client
- 
+
       - name: Debug TAR Archive
         run: ls -lah release/hrflow-build.tar.gz || echo "❌ TAR file is missing!"
 
