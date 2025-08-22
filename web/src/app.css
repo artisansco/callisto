@@ -1,3 +1,11 @@
+/** biome-ignore-all lint/suspicious/noUnknownAtRules: <> */
 @import "tailwindcss";
+@import "basecoat-css";
+@import "tw-animate-css";
+
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@theme {
+  --color-primary: #007bff;
+}
