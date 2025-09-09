@@ -3,11 +3,13 @@ package server
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -19,8 +21,11 @@ import (
 
 func (app *Application) RegisterRoutes() http.Handler {
 	router := chi.NewRouter()
-	router.Use(middleware.Logger)
 
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.Logger)
+	router.Use(middleware.CleanPath)
+	router.Use(middleware.StripSlashes)
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
@@ -29,8 +34,57 @@ func (app *Application) RegisterRoutes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	router.Get("/", app.HelloWorldHandler)
-	router.Get("/users", app.getAllUsers)
+	router.Post("/api/v1/auth/token", func(w http.ResponseWriter, r *http.Request) {
+		decoder := json.NewDecoder(r.Body)
+		// decoder.DisallowUnknownFields()
+
+		payload := struct {
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}{}
+
+		err := decoder.Decode(&payload)
+		if err != nil {
+			request.JSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+			return
+		}
+
+		payload.Email = strings.TrimSpace(payload.Email)
+		payload.Password = strings.TrimSpace(payload.Password)
+
+		if len(payload.Email) == 0 || len(payload.Password) == 0 {
+			request.JSON(w, http.StatusBadRequest, map[string]string{"error": "Email and password are required"})
+			return
+		}
+
+		// token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		// 	"email": payload.Email,
+		// 	"exp":   time.Now().Add(time.Hour * 24).Unix(),
+		// })
+		// tokenString, err := token.SignedString([]byte("secret"))
+		// if err != nil {
+		// 	request.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		// 	return
+		// }
+
+		request.JSON(w, http.StatusOK, map[string]any{
+			"status":  "success",
+			"message": "User created successfully",
+			"data": map[string]string{
+				"token": "01992ed4-98ae-7a81-be8e-e4e9fc5b922a",
+			},
+		})
+	})
+
+	router.Route("/api/v1/users", func(r chi.Router) {
+
+		router.Group(func(r chi.Router) {
+			// r.Get("/", app.HelloWorldHandler)
+			r.Get("/", app.getAllUsers)
+
+		})
+
+	})
 
 	router.Get("/health", app.healthHandler)
 

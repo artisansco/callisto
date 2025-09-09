@@ -3,7 +3,9 @@
   import { login } from "./login.remote";
 
   $effect(() => {
-    login.result?.error && toast.error(login.result?.error);
+    if (login.result?.error) {
+      toast.error(login.result.error);
+    }
   });
 </script>
 
