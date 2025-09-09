@@ -55,7 +55,7 @@ tidy:
 
 # Run the application
 run: build
-	@go run cmd/api/
+	@go run ./cmd/api/
 
 
 # Build the application
