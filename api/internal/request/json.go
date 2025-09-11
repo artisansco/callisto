@@ -73,28 +73,3 @@ func decodeJSON(w http.ResponseWriter, r *http.Request, dst any, disallowUnknown
 
 	return nil
 }
-
-func JSON(w http.ResponseWriter, status int, data any) error {
-	return JSONWithHeaders(w, status, data, nil)
-}
-
-func JSONWithHeaders(w http.ResponseWriter, status int, data any, headers http.Header) error {
-	js, err := json.MarshalIndent(data, "", "\t")
-	if err != nil {
-		return err
-	}
-
-	js = append(js, '\n')
-
-	for key, values := range headers {
-		for _, value := range values {
-			w.Header().Add(key, value)
-		}
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	w.Write(js)
-
-	return nil
-}

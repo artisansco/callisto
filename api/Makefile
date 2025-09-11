@@ -52,22 +52,19 @@ tidy:
 	go mod tidy -v
 	go fmt ./...
 
-
-# Run the application
-run: build
-	@go run ./cmd/api/
-
-
-# Build the application
-all: build test
-
-
+## build: build the cmd/api application
+.PHONY: build
 build:
 	@echo "Building..."
-	@go build -o ./bin/api cmd/api/main.go
+	@go build -o ./cmd/bin/api cmd/api/
+
+## run: run the cmd/api application
+.PHONY: run
+run: build
+	@go run ./cmd/bin/api
 
 
-## build/api: build the cmd/api application
+## build/api: build the cmd/api application for all platforms
 .PHONY: build/all
 build/all:
 	@echo 'Building cmd/api...'
@@ -83,7 +80,7 @@ build/all:
 # Clean the binary
 clean:
 	@echo "Cleaning..."
-	@rm -rf ./bin
+	@rm -rf ./cmd/bin
 
 # Live Reload
 watch:
@@ -111,16 +108,10 @@ watch:
 	fi
 
 
-.PHONY: all build run test clean watch
 
 # ==================================================================================== #
 # DATABASE MIGRATIONS
 # ==================================================================================== #
-
-## db/sqlite: connect to database using sqlite
-.PHONY: db/sqlite
-db/sqlite:
-	sqlite ${DATABASE_URL}
 
 ## db/migrations/new name=$1: creates a new database migration
 .PHONY: db/migrations/new
@@ -130,7 +121,7 @@ migrations/new:
 
 ## db/migrations/up: apply all up database migrations
 .PHONY: db/migrations/up
-migrations/up: confirm
+migrations/up:
 	@echo 'Running up migrations...'
 	goose -dir=migrations sqlite ${DATABASE_URL} up
 
