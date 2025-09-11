@@ -1,5 +1,7 @@
-# HRFlow
-Our platform is an HR automation SaaS designed to streamline workforce management for companies of all sizes. 
+# Jinji (人事) → “human affairs / HR” (exact HR term) - in japanese.
+“Workflows that work for people by Simplifying HR, and amplifying results.”
+
+Our platform is an HR automation SaaS designed to streamline workforce management for companies of all sizes.
 It helps businesses manage interns, temporary staff, permanent employees, and contractors by automating key HR processes such as contract expiry tracking, performance evaluations, and document generation.
 
 For startups and small businesses, the platform offers cost-effective automation, one-click onboarding, Slack/Discord integrations, and self-service portals, reducing the need for dedicated HR teams.
@@ -92,4 +94,3 @@ Larger companies need compliance, security, and scalability. Key features:
 *    Scalability Enhancements: Multi-tenancy and role-based access control.
 *    AI-Assisted HR Automation: Smart recommendations based on employee data.
 *    Marketing & Onboarding Tools: Automated trials, tutorials, and support system.
-
