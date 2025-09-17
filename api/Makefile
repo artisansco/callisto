@@ -56,7 +56,7 @@ tidy:
 .PHONY: build
 build:
 	@echo "Building..."
-	@go build -o ./cmd/bin/api cmd/api/
+	@go build -o ./bin/api ./cmd/api/
 
 ## run: run the cmd/api application
 .PHONY: run
@@ -80,7 +80,7 @@ build/all:
 # Clean the binary
 clean:
 	@echo "Cleaning..."
-	@rm -rf ./cmd/bin
+	@rm -rf ./cmd/bin ./bin
 
 # Live Reload
 watch:

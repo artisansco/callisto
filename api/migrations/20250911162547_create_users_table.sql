@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name text NOT NULL,
@@ -6,7 +8,9 @@ CREATE TABLE IF NOT EXISTS users (
   created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) STRICT;
+-- +goose StatementEnd
 
+-- +goose StatementBegin
 CREATE TRIGGER IF NOT EXISTS set_updated_at
 AFTER UPDATE ON users
 FOR EACH ROW
@@ -15,3 +19,10 @@ BEGIN
   SET updated_at = CURRENT_TIMESTAMP
   WHERE id = OLD.id;
 END;
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS users;
+DROP TRIGGER IF EXISTS set_updated_at;
+-- +goose StatementEnd
