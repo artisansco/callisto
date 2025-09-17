@@ -21,7 +21,7 @@ type config struct {
 	}
 }
 
-type Application struct {
+type application struct {
 	config config
 	port   int
 	db     *database.Queries
@@ -44,17 +44,18 @@ func main() {
 	// 	return err
 	// }
 
-	app := &Application{
+	db := server.NewDB(dsn)
+	app := &application{
 		config: cfg,
 		port:   port,
-		db:     server.NewDB(dsn),
+		db:     db,
 	}
 
 	app.serve()
 }
 
-func (app *Application) serve() error {
-	serv := server.NewServer()
+func (app *application) serve() error {
+	serv := server.NewServer(app.db)
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)

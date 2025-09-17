@@ -25,10 +25,10 @@ const (
 	defaultShutdownPeriod = 30 * time.Second
 )
 
-func NewServer() *http.Server {
+func NewServer(db *database.Queries) *http.Server {
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", env.GetInt("PORT", 5000)),
-		Handler:      routes.Routes(),
+		Handler:      routes.Routes(db),
 		IdleTimeout:  defaultIdleTimeout,
 		ReadTimeout:  defaultReadTimeout,
 		WriteTimeout: defaultWriteTimeout,
@@ -55,9 +55,8 @@ func NewDB(dsn string) *database.Queries {
 	db.SetMaxIdleConns(25)
 	db.SetConnMaxIdleTime(5 * time.Minute)
 	db.SetConnMaxLifetime(2 * time.Hour)
-	tmp := database.New(db)
 
-	return tmp
+	return database.New(db)
 }
 
 func GracefulShutdown(apiServer *http.Server, done chan bool) {

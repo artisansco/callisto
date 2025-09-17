@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 
+	"jinji/internal/database"
 	"jinji/internal/response"
 
 	"github.com/go-chi/chi/v5"
@@ -10,7 +11,12 @@ import (
 	"github.com/go-chi/cors"
 )
 
-func Routes() http.Handler {
+type Application struct {
+	db *database.Queries
+}
+
+func Routes(db *database.Queries) http.Handler {
+	app := &Application{db: db}
 	mux := chi.NewRouter()
 
 	mux.Use(middleware.Recoverer)
@@ -30,6 +36,7 @@ func Routes() http.Handler {
 	})
 
 	mux.Post("/api/v1/auth/token", generateToken)
+	mux.Get("/api/v1/users", app.getUsers)
 
 	return mux
 }
